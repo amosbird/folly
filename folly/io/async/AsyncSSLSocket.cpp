@@ -800,7 +800,8 @@ bool AsyncSSLSocket::applyVerificationOptions(const ssl::SSLUniquePtr& ssl) {
   if (verifyPeer_ == SSLContext::SSLVerifyPeerEnum::USE_CTX) {
     if (ctx_->needsPeerVerification()) {
       if (ctx_->checkPeerName()) {
-#if FOLLY_OPENSSL_IS_100 || FOLLY_OPENSSL_IS_101
+// #if FOLLY_OPENSSL_IS_100 || FOLLY_OPENSSL_IS_101
+#if 1
         return false;
 #else
         std::string peerNameToVerify = !ctx_->peerFixedName().empty()

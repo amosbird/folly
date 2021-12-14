@@ -72,6 +72,14 @@
   (((major << 28) | ((minor << 20) | (fix << 12))))
 #define FOLLY_OPENSSL_PREREQ(major, minor, fix) \
   (OPENSSL_VERSION_NUMBER >= FOLLY_OPENSSL_CALCULATE_VERSION(major, minor, fix))
+#else
+#define OPENSSL_VERSION_NUMBER 0x10100000L
+#define FOLLY_OPENSSL_IS_110 1
+#define FOLLY_OPENSSL_CALCULATE_VERSION(major, minor, fix) \
+  (((major << 28) | ((minor << 20) | (fix << 12))))
+#define FOLLY_OPENSSL_PREREQ(major, minor, fix) \
+  (OPENSSL_VERSION_NUMBER >= FOLLY_OPENSSL_CALCULATE_VERSION(major, minor, fix))
+// #define FOLLY_OPENSSL_PREREQ(major, minor, fix) 1
 #endif
 
 #if !defined(OPENSSL_IS_BORINGSSL) && !FOLLY_OPENSSL_IS_100 && \
@@ -80,12 +88,12 @@
 #endif
 
 // BoringSSL and OpenSSL 0.9.8f later with TLS extension support SNI.
-#if defined(OPENSSL_IS_BORINGSSL) || \
-    (OPENSSL_VERSION_NUMBER >= 0x00908070L && !defined(OPENSSL_NO_TLSEXT))
-#define FOLLY_OPENSSL_HAS_SNI 1
-#else
+// #if defined(OPENSSL_IS_BORINGSSL) || \
+//     (OPENSSL_VERSION_NUMBER >= 0x00908070L && !defined(OPENSSL_NO_TLSEXT))
+// #define FOLLY_OPENSSL_HAS_SNI 1
+// #else
 #define FOLLY_OPENSSL_HAS_SNI 0
-#endif
+// #endif
 
 // BoringSSL and OpenSSL 1.0.2 later with TLS extension support ALPN.
 #if defined(OPENSSL_IS_BORINGSSL) || \
@@ -145,7 +153,7 @@ namespace portability {
 namespace ssl {
 
 #ifdef OPENSSL_IS_BORINGSSL
-int SSL_CTX_set1_sigalgs_list(SSL_CTX* ctx, const char* sigalgs_list);
+// int SSL_CTX_set1_sigalgs_list(SSL_CTX* ctx, const char* sigalgs_list);
 int TLS1_get_client_version(SSL* s);
 #endif
 
@@ -238,7 +246,7 @@ void OPENSSL_cleanup();
 const ASN1_INTEGER* X509_REVOKED_get0_serialNumber(const X509_REVOKED* r);
 const ASN1_TIME* X509_REVOKED_get0_revocationDate(const X509_REVOKED* r);
 
-uint32_t X509_get_extension_flags(X509* x);
+// uint32_t X509_get_extension_flags(X509* x);
 uint32_t X509_get_key_usage(X509* x);
 uint32_t X509_get_extended_key_usage(X509* x);
 

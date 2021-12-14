@@ -247,6 +247,51 @@ void installHandlers() {
 } // namespace exception_tracer
 } // namespace folly
 
+#else
+
+namespace folly {
+namespace exception_tracer {
+
+std::ostream& operator<<(std::ostream& out, const ExceptionInfo& info) {
+  printExceptionInfo(out, info, 0);
+  return out;
+}
+
+// TODO (ab) find a way to use clickhouse symbolizer
+void printExceptionInfo(
+    std::ostream& out, const ExceptionInfo& info, int) {
+  out << "Exception type: ";
+  if (info.type) {
+    out << folly::demangle(*info.type);
+  } else {
+    out << "(unknown type)";
+  }
+  static constexpr size_t kInternalFramesNumber = 3;
+
+  // Skip our own internal frames.
+  size_t frameCount = info.frames.size();
+  if (frameCount <= kInternalFramesNumber) {
+    out << "\n";
+    return;
+  }
+  auto addresses = info.frames.data() + kInternalFramesNumber;
+  frameCount -= kInternalFramesNumber;
+
+  out << " (" << frameCount << (frameCount == 1 ? " frame" : " frames")
+      << ")\n";
+  out << "\n !!! caught unexpected exception\n";
+}
+
+// TODO (ab) find a way to use clickhouse exception
+std::vector<ExceptionInfo> getCurrentExceptions() {
+  std::vector<ExceptionInfo> exceptions;
+  LOG(WARNING) << "Exception stack trace invalid, stack traces not available";
+  return exceptions;
+}
+
+} // namespace exception_tracer
+} // namespace folly
+
 #endif // defined(__GLIBCXX__)
 
 #endif // FOLLY_HAVE_ELF && FOLLY_HAVE_DWARF

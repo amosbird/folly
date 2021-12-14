@@ -19,15 +19,14 @@
 
 #include <stdexcept>
 
+#include <ssl/internal.h>
+#include <crypto/x509/internal.h>
+
 namespace folly {
 namespace portability {
 namespace ssl {
 
 #ifdef OPENSSL_IS_BORINGSSL
-int SSL_CTX_set1_sigalgs_list(SSL_CTX*, const char*) {
-  return 1; // 0 implies error
-}
-
 int TLS1_get_client_version(SSL* s) {
   // Note that this isn't the client version, and the API to
   // get this has been hidden. It may be found by parsing the
@@ -272,12 +271,12 @@ void DH_get0_key(
 }
 
 long DH_get_length(const DH* dh) {
-  return dh->length;
+  return dh->priv_length;
 }
 
 int DH_set_length(DH* dh, long length) {
   if (dh != nullptr) {
-    dh->length = length;
+    dh->priv_length = length;
     return 1;
   } else {
     return 0;
@@ -473,11 +472,11 @@ const ASN1_TIME* X509_REVOKED_get0_revocationDate(const X509_REVOKED* r) {
   return r->revocationDate;
 }
 
-uint32_t X509_get_extension_flags(X509* x) {
-  // Tells OpenSSL to load flags
-  X509_check_purpose(x, -1, -1);
-  return x->ex_flags;
-}
+// uint32_t X509_get_extension_flags(X509* x) {
+//   // Tells OpenSSL to load flags
+//   X509_check_purpose(x, -1, -1);
+//   return x->ex_flags;
+// }
 
 uint32_t X509_get_key_usage(X509* x) {
   // Call get_extension_flags rather than accessing directly to force loading

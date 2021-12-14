@@ -227,7 +227,8 @@ SSL_CTX* OpenSSLUtils::getSSLInitialCtx(SSL* ssl) {
 
 BioMethodUniquePtr OpenSSLUtils::newSocketBioMethod() {
   BIO_METHOD* newmeth = nullptr;
-#if FOLLY_OPENSSL_IS_110
+// #if FOLLY_OPENSSL_IS_110
+#if 0
   if (!(newmeth = BIO_meth_new(BIO_TYPE_SOCKET, "socket_bio_method"))) {
     return nullptr;
   }
@@ -274,20 +275,22 @@ int OpenSSLUtils::getBioShouldRetryWrite(int r) {
   return ret;
 }
 
+// TODO (ab) find out the correct implementation
 void OpenSSLUtils::setBioAppData(BIO* b, void* ptr) {
-#ifdef OPENSSL_IS_BORINGSSL
-  BIO_set_callback_arg(b, static_cast<char*>(ptr));
-#else
-  BIO_set_app_data(b, ptr);
-#endif
+// #ifdef OPENSSL_IS_BORINGSSL
+//   BIO_set_callback_arg(b, static_cast<char*>(ptr));
+// #else
+//   BIO_set_app_data(b, ptr);
+// #endif
 }
 
 void* OpenSSLUtils::getBioAppData(BIO* b) {
-#ifdef OPENSSL_IS_BORINGSSL
-  return BIO_get_callback_arg(b);
-#else
-  return BIO_get_app_data(b);
-#endif
+// #ifdef OPENSSL_IS_BORINGSSL
+//   return BIO_get_callback_arg(b);
+// #else
+//   return BIO_get_app_data(b);
+// #endif
+   return nullptr;
 }
 
 NetworkSocket OpenSSLUtils::getBioFd(BIO* b) {
@@ -311,6 +314,7 @@ void OpenSSLUtils::setBioFd(BIO* b, NetworkSocket fd, int flags) {
   BIO_set_fd(b, sock, flags);
 }
 
+#define ub_common_name                  64
 std::string OpenSSLUtils::getCommonName(X509* x509) {
   if (x509 == nullptr) {
     return "";

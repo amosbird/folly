@@ -551,35 +551,35 @@ constexpr auto kCpplibVer = 0;
 #define FOLLY_CXX17_CONSTEXPR
 #endif
 
-#if __cplusplus >= 201703L
-// folly::coro requires C++17 support
-#if defined(_WIN32) && defined(__clang__) && !defined(LLVM_COROUTINES)
-// LLVM and MSVC coroutines are ABI incompatible, so for the MSVC implementation
-// of <experimental/coroutine> on Windows we *don't* have coroutines.
-//
-// LLVM_COROUTINES indicates that LLVM compatible header is added to include
-// path and can be used.
-//
-// Worse, if we define FOLLY_HAS_COROUTINES 1 we will include
-// <experimental/coroutine> which will conflict with anyone who wants to load
-// the LLVM implementation of coroutines on Windows.
+// #if __cplusplus >= 201703L
+// // folly::coro requires C++17 support
+// #if defined(_WIN32) && defined(__clang__) && !defined(LLVM_COROUTINES)
+// // LLVM and MSVC coroutines are ABI incompatible, so for the MSVC implementation
+// // of <experimental/coroutine> on Windows we *don't* have coroutines.
+// //
+// // LLVM_COROUTINES indicates that LLVM compatible header is added to include
+// // path and can be used.
+// //
+// // Worse, if we define FOLLY_HAS_COROUTINES 1 we will include
+// // <experimental/coroutine> which will conflict with anyone who wants to load
+// // the LLVM implementation of coroutines on Windows.
+// #define FOLLY_HAS_COROUTINES 0
+// #elif (__cpp_coroutines >= 201703L || __cpp_impl_coroutine >= 201902L) && \
+//     (__has_include(<coroutine>) || __has_include(<experimental/coroutine>))
+// #define FOLLY_HAS_COROUTINES 1
+// // This is mainly to workaround bugs triggered by LTO, when stack allocated
+// // variables in await_suspend end up on a coroutine frame.
+// #define FOLLY_CORO_AWAIT_SUSPEND_NONTRIVIAL_ATTRIBUTES FOLLY_NOINLINE
+// #elif _MSC_VER && _RESUMABLE_FUNCTIONS_SUPPORTED
+// // NOTE: MSVC 2017 does not currently support the full Coroutines TS since it
+// // does not yet support symmetric-transfer.
+// #define FOLLY_HAS_COROUTINES 0
+// #else
+// #define FOLLY_HAS_COROUTINES 0
+// #endif
+// #else
 #define FOLLY_HAS_COROUTINES 0
-#elif (__cpp_coroutines >= 201703L || __cpp_impl_coroutine >= 201902L) && \
-    (__has_include(<coroutine>) || __has_include(<experimental/coroutine>))
-#define FOLLY_HAS_COROUTINES 1
-// This is mainly to workaround bugs triggered by LTO, when stack allocated
-// variables in await_suspend end up on a coroutine frame.
-#define FOLLY_CORO_AWAIT_SUSPEND_NONTRIVIAL_ATTRIBUTES FOLLY_NOINLINE
-#elif _MSC_VER && _RESUMABLE_FUNCTIONS_SUPPORTED
-// NOTE: MSVC 2017 does not currently support the full Coroutines TS since it
-// does not yet support symmetric-transfer.
-#define FOLLY_HAS_COROUTINES 0
-#else
-#define FOLLY_HAS_COROUTINES 0
-#endif
-#else
-#define FOLLY_HAS_COROUTINES 0
-#endif // __cplusplus >= 201703L
+// #endif // __cplusplus >= 201703L
 
 // MSVC 2017.5 && C++17
 #if __cpp_noexcept_function_type >= 201510 || \

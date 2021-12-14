@@ -58,27 +58,27 @@ static constexpr auto cxxabi_demangle = static_cast<char* (*)(...)>(nullptr);
 //
 //  in contrast with cxxabi, where there are certainly other referenced symbols
 
-#if __has_include(<demangle.h>)
+// #if __has_include(<demangle.h>)
 
-static constexpr auto liberty_demangle = cplus_demangle_v3_callback;
+// static constexpr auto liberty_demangle = cplus_demangle_v3_callback;
 
-#if defined(DMGL_NO_RECURSE_LIMIT)
-static constexpr auto liberty_demangle_options_no_recurse_limit =
-    DMGL_NO_RECURSE_LIMIT;
-#else
-static constexpr auto liberty_demangle_options_no_recurse_limit = 0;
-#endif
+// #if defined(DMGL_NO_RECURSE_LIMIT)
+// static constexpr auto liberty_demangle_options_no_recurse_limit =
+//     DMGL_NO_RECURSE_LIMIT;
+// #else
+// static constexpr auto liberty_demangle_options_no_recurse_limit = 0;
+// #endif
 
-static constexpr auto liberty_demangle_options = //
-    DMGL_PARAMS | DMGL_ANSI | DMGL_TYPES | //
-    liberty_demangle_options_no_recurse_limit;
+// static constexpr auto liberty_demangle_options = //
+//     DMGL_PARAMS | DMGL_ANSI | DMGL_TYPES | //
+//     liberty_demangle_options_no_recurse_limit;
 
-#else // __has_include(<demangle.h>)
+// #else // __has_include(<demangle.h>)
 
 static constexpr auto liberty_demangle = static_cast<int (*)(...)>(nullptr);
 static constexpr auto liberty_demangle_options = 0;
 
-#endif // __has_include(<demangle.h>)
+// #endif // __has_include(<demangle.h>)
 
 //  implementations
 
